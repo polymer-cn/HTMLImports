@@ -134,7 +134,18 @@ if (!useNative) {
     // which is too late
     if (!(resource instanceof Document)) {
       // install html
-      doc.body.innerHTML = resource;
+      //under MIUI 14.0, doc.body.innerHTML = '...' will cause MIUI browser and webview crash.
+      var tmpDiv = document.createElement('div');
+      var tmpFragment = document.createDocumentFragment();
+      var child = null;
+
+      tmpDiv.innerHTML = resource;
+      while (child = tmpDiv.firstChild) {
+          tmpFragment.appendChild(child)
+      }
+      doc.body.appendChild(tmpFragment)
+      tmpDiv = null
+      //doc.body.innerHTML = resource;
     }
     // TODO(sorvell): ideally this code is not aware of Template polyfill,
     // but for now the polyfill needs help to bootstrap these templates
