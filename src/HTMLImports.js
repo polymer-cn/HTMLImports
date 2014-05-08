@@ -119,7 +119,17 @@ if (!useNative) {
     base.setAttribute('href', url);
     // add baseURI support to browsers (IE) that lack it.
     if (!doc.baseURI) {
-      doc.baseURI = url;
+      var baseURIDescriptor = {
+        get: function() {
+          return url
+        },
+        configurable: true
+      };
+      try {
+        Object.defineProperty(doc, 'baseURI', baseURIDescriptor);
+      } catch(e) {
+        console.error(e)
+      }
     }
     // ensure UTF-8 charset
     var meta = doc.createElement('meta');
